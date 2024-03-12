@@ -1,11 +1,36 @@
-const Message = require('../models/messageModel');
 const { io } = require('../../index');
-const ChatRoom = require('../models/chatRoomModel');
+const { ChatRoom, Message, User } = require('../models');
 
 const RedisCache = require('../config/redis');
 const redisCache = new RedisCache();
 
-exports.chat = async (req, res) => {
+exports.createChatRoom = async (req, res) => {
+  try {
+    const { roomName } = req.body;
+
+    // Create a new chat room
+    const chatRoom = await ChatRoom.create({ room_name: roomName });
+
+    res.status(201).json({ chatRoom });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+exports.allChatRooms = async (req, res) => {
+  try {
+    // List available chat rooms
+    const chatRooms = await ChatRoom.findAll();
+
+    res.status(200).json({ chatRooms });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+exports.chats = async (req, res) => {
   try {
     const { id } = req.params;
     const { message, userId } = req.body;

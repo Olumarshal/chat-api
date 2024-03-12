@@ -1,20 +1,28 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes, Model } = require('sequelize');
 const sequelize = require('../config/db');
 
-const ChatRoom = sequelize.define('ChatRoom', {
-  room_id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
+class ChatRoom extends Model {}
+
+ChatRoom.init(
+  {
+    room_id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    room_name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
   },
-  room_name: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-});
+  {
+    sequelize,
+    modelName: 'ChatRoom',
+  }
+);
 
 ChatRoom.associate = (models) => {
-  ChatRoom.hasMany(models.Message);
+  ChatRoom.hasMany(models.Message, { foreignKey: 'ChatRoomId' });
 };
 
 module.exports = ChatRoom;
